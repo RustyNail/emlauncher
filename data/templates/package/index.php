@@ -24,9 +24,12 @@
             <?=htmlspecialchars($package->getTitle())?>
           </a>
         </h3>
-        <p>
-          <?=nl2br(htmlspecialchars($package->getDescription()))?>
-        </p>
+        <?php
+          # automatically converted to links
+          $row_description = htmlspecialchars($package->getDescription());
+          $description = preg_replace('/(https?|ftp)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)/', '<a target="_blank" href="\\1\\2">\\1\\2</a>', $row_description);
+        ?>
+        <p><?=nl2br($description)?></p>
       </div>
       <div class="col-xs-5">
 <?php if($login_user->getPackageInstalledDate($package)): ?>
