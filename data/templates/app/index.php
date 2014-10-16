@@ -7,7 +7,12 @@
   </p>
   <div class="media-body">
     <h2 class="media-hedding"><a href="<?=url("/app?id={$app->getId()}")?>"><?=htmlspecialchars($app->getTitle())?></a></h2>
-    <p><?=nl2br(htmlspecialchars($app->getDescription()))?></p>
+    <?php
+      # automatically converted to links
+      $row_description = htmlspecialchars($app->getDescription());
+      $description = preg_replace('/(https?|ftp)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)/', '<a target="_blank" href="\\1\\2">\\1\\2</a>', $row_description);
+    ?>
+    <p><?=nl2br($description)?></p>
   </div>
 </div>
 
@@ -31,6 +36,7 @@
     </ul>
 
     <div id="tag-filter">
+      <?php $filter_open = 1; ?>
       <a id="tag-filter-toggle" class="pull-right badge"><i class="fa fa-angle-double-<?=$filter_open?'up':'down'?>"></i></a>
       <div id="tag-filter-body" style="display: <?=($filter_open)? 'block': 'none'?>">
 <?php foreach($app->getTags() as $tag): ?>

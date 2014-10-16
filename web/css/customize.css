@@ -277,3 +277,7 @@ h3 {
 #tag-filter-toggle > i.fa-angle-double-down:before {
   content: "filter tags \f103";
 }
+
+#app-index .col-md-6 {
+  width: 100%;
+}
