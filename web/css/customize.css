@@ -151,6 +151,12 @@ h2>.subtitle {
 .fa-apple {
   color: silver;
 }
+.fa-apple-osx {
+  color: black;
+}
+.fa-windows {
+  color: DeepSkyBlue;
+}
 
 h3 {
   margin-top: 2px;

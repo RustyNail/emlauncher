@@ -33,6 +33,9 @@
       <li<?php if($pf==='osx'):?> class="active"<?php endif?> id="osx">
         <a href="<?="?id={$app->getId()}&pf=osx"?>">OSX</a>
       </li>
+      <li<?php if($pf==='windows'):?> class="active"<?php endif?> id="windows">
+        <a href="<?="?id={$app->getId()}&pf=windows"?>">Windows</a>
+      </li>
       <li<?php if($pf==='all'):?> class="active"<?php endif?> id="all">
         <a href="<?="?id={$app->getId()}&pf=all"?>">All</a>
       </li>

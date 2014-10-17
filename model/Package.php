@@ -14,10 +14,12 @@ class Package extends mfwObject {
 	const PF_ANDROID = 'Android';
 	const PF_IOS = 'iOS';
 	const PF_OSX = 'OSX';
+	const PF_WINDOWS = 'Windows';
 	const PF_UNKNOWN = 'unknown';
 	const MIME_ANDROID = 'application/vnd.android.package-archive';
 	const MIME_IOS = 'application/octet-stream';
 	const MIME_OSX = 'application/octet-stream';
+	const MIME_WINDOWS = 'application/x-msdownload';
 
 	const FILE_DIR = 'package/';
 	const TEMP_DIR = 'temp-data/';
@@ -26,6 +28,7 @@ class Package extends mfwObject {
 	const IOS_FILE_SIZE_LIMIT_MB = 100;
 	const ANDROID_FILE_SIZE_LIMIT_MB = 50;
 	const OSX_FILE_SIZE_LIMIT_MB = 100;
+	const WINDOWS_FILE_SIZE_LIMIT_MB = 100;
 
 	protected $app = null;
 	protected $tags = null;
@@ -50,6 +53,8 @@ class Package extends mfwObject {
 			switch($ext){
 			case 'dmg':
 				return self::PF_OSX;
+			case 'exe':
+				return self::PF_WINDOWS;
 			default:
 				return self::PF_UNKNOWN;
 			}
@@ -92,6 +97,8 @@ class Package extends mfwObject {
 			return self::ANDROID_FILE_SIZE_LIMIT_MB;
 		case self::PF_OSX:
 			return self::OSX_FILE_SIZE_LIMIT_MB;
+		case self::PF_WINDOWS:
+			return self::WINDOWS_FILE_SIZE_LIMIT_MB;
 		default:
 			return 0;
 		}
@@ -222,6 +229,10 @@ class PackageDb extends mfwObjectDb {
 			$platform = Package::PF_OSX;
 			$mime = Package::MIME_OSX;
 		}
+		if($is_zip && $ext==='exe'){
+			$platform = Package::PF_WINDOWS;
+			$mime = Package::MIME_WINDOWS;
+		}
 		return array($platform,$ext,$mime);
 	}
 
@@ -272,6 +283,10 @@ class PackageDb extends mfwObjectDb {
 			switch($pf_filter){
 			case 'OSX':
 				$sql .= ' AND p.file_name LIKE "%.dmg"';
+				break;
+			case 'Windows':
+				$sql .= ' AND p.file_name LIKE "%.exe"';
+				break;
 			default:
 			}
 		}
