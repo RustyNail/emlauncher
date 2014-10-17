@@ -8,6 +8,10 @@ case 'iOS':
 	$icon = 'fa-apple';
 	$name = ' iOS';
 	break;
+case 'OSX':
+	$icon = 'fa-apple';
+	$name = ' OSX';
+	break;
 default:
 	$icon = 'fa-question';
 	$name = ' unknown';

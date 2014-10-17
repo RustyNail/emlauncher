@@ -13,9 +13,11 @@ class Package extends mfwObject {
 
 	const PF_ANDROID = 'Android';
 	const PF_IOS = 'iOS';
+	const PF_OSX = 'OSX';
 	const PF_UNKNOWN = 'unknown';
 	const MIME_ANDROID = 'application/vnd.android.package-archive';
 	const MIME_IOS = 'application/octet-stream';
+	const MIME_OSX = 'application/octet-stream';
 
 	const FILE_DIR = 'package/';
 	const TEMP_DIR = 'temp-data/';
@@ -23,6 +25,7 @@ class Package extends mfwObject {
 	// AppStore, GooglePlayでの制限ファイルサイズ(MB)
 	const IOS_FILE_SIZE_LIMIT_MB = 100;
 	const ANDROID_FILE_SIZE_LIMIT_MB = 50;
+	const OSX_FILE_SIZE_LIMIT_MB = 100;
 
 	protected $app = null;
 	protected $tags = null;
@@ -42,7 +45,17 @@ class Package extends mfwObject {
 		return $this->app;
 	}
 	public function getPlatform(){
-		return $this->value('platform');
+		if($this->value('platform') == 'unknown') {
+			$ext = pathinfo($this->value('original_file_name'),PATHINFO_EXTENSION);
+			switch($ext){
+			case 'dmg':
+				return self::PF_OSX;
+			default:
+				return self::PF_UNKNOWN;
+			}
+		} else {
+			return $this->value('platform');
+		}
 	}
 	public function getBaseFileName(){
 		return $this->value('file_name');
@@ -77,6 +90,8 @@ class Package extends mfwObject {
 			return self::IOS_FILE_SIZE_LIMIT_MB;
 		case self::PF_ANDROID:
 			return self::ANDROID_FILE_SIZE_LIMIT_MB;
+		case self::PF_OSX:
+			return self::OSX_FILE_SIZE_LIMIT_MB;
 		default:
 			return 0;
 		}
@@ -203,6 +218,10 @@ class PackageDb extends mfwObjectDb {
 			$platform = Package::PF_IOS;
 			$mime = Package::MIME_IOS;
 		}
+		if($is_zip && $ext==='dmg'){
+			$platform = Package::PF_OSX;
+			$mime = Package::MIME_OSX;
+		}
 		return array($platform,$ext,$mime);
 	}
 
@@ -246,10 +265,15 @@ class PackageDb extends mfwObjectDb {
 		}
 		$sql = 'SELECT p.* FROM package AS p LEFT JOIN package_tag AS t ON p.id = t.package_id WHERE p.app_id = :app_id';
 		$bind = array(':app_id' => $app_id);
-
-		if ($pf_filter) {
+		if ($pf_filter == 'Android' || $pf_filter == 'iOS') {
 			$sql .= ' AND p.platform = :platform';
 			$bind[':platform'] = $pf_filter;
+                }else{
+			switch($pf_filter){
+			case 'OSX':
+				$sql .= ' AND p.file_name LIKE "%.dmg"';
+			default:
+			}
 		}
 
 		if (!empty($tags)) {

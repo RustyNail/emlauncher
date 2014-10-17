@@ -74,11 +74,12 @@ class appActions extends MainActions
 		static $pf = array(
 			'android' => Package::PF_ANDROID,
 			'ios' => Package::PF_IOS,
+			'osx' => Package::PF_OSX,
 			'all' => null,
 			);
 
 		$platform = mfwRequest::param('pf');
-		if(!in_array($platform,array('android','ios','all'))){
+		if(!in_array($platform,array('android','ios','osx','all'))){
 			$ua = mfwRequest::userAgent();
 			if($ua->isAndroid()){
 				$platform = 'android';
