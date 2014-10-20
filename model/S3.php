@@ -94,7 +94,10 @@ class S3 {
 		if($expires===null){
 			return "https://{$bucket}.s3.amazonaws.com/{$key}";
 		}
-		return $s3->client->getObjectUrl($bucket,$key,$expires);
+		preg_match("/package\/[0-9]+\/([0-9]+)_.*/",$key,$match);
+		$row = mfwDBIBase::getRow("SELECT * FROM package WHERE id = {$match[1]}");
+		$opt = array('ResponseContentDisposition' => "attachment; filename={$row['original_file_name']}");
+		return $s3->client->getObjectUrl($bucket,$key,$expires,$opt);
 	}
 
 }
